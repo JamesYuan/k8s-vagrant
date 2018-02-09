@@ -1,0 +1,4 @@
+.vagrant/
+amd64/
+rpms/
+data/
