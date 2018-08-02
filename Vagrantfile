@@ -29,7 +29,7 @@ def set_libvirt(lv, config)
   end
 end
 
-$os_image = (ENV['OS_IMAGE'] || "centos/7").to_sym
+$os_image = (ENV['OS_IMAGE'] || "centos7").to_sym
 
 Vagrant.configure("2") do |config|
   config.vm.provider "libvirt"
