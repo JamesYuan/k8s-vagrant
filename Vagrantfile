@@ -34,6 +34,9 @@ $os_image = (ENV['OS_IMAGE'] || "ubuntu16").to_sym
 Vagrant.configure("2") do |config|
   config.vm.provider "libvirt"
   config.vm.provider "virtualbox"
+
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+
   master = 1
   node = 2
 
