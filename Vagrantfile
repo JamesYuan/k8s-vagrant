@@ -40,6 +40,11 @@ Vagrant.configure("2") do |config|
   master = 1
   node = 2
 
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo setenforce 0
+    sudo sed -i 's/^SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+  SHELL
+
   config.vm.provision "shell", inline: "sudo swapoff -a && sudo sysctl -w vm.swappiness=0"
 
   private_count = 10
