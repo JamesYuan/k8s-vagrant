@@ -47,6 +47,42 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", inline: "sudo swapoff -a && sudo sysctl -w vm.swappiness=0"
 
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo curl -fsSL https://get.docker.com/ | sh
+    sudo systemctl enable docker && sudo systemctl start docker
+  SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+    sudo sysctl -p /etc/sysctl.d/k8s.conf
+  SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo cp /vagrant/amd64/kubelet /usr/local/bin/kubelet
+    sudo chmod +x /usr/local/bin/kubelet
+
+    sudo cp /vagrant/amd64/kubectl /usr/local/bin/kubectl
+    sudo chmod +x /usr/local/bin/kubectl
+  SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum -y install wget
+    export CNI_URL=https://github.com/containernetworking/plugins/releases/download
+    sudo mkdir -p /opt/cni/bin && cd /opt/cni/bin
+    sudo wget -qO- "${CNI_URL}/v0.7.1/cni-plugins-amd64-v0.7.1.tgz" | sudo tar -zx
+  SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+    export CFSSL_URL=https://pkg.cfssl.org/R1.2
+    sudo wget ${CFSSL_URL}/cfssl_linux-amd64 -O /usr/local/bin/cfssl
+    sudo wget ${CFSSL_URL}/cfssljson_linux-amd64 -O /usr/local/bin/cfssljson
+    sudo chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
+  SHELL
+
   private_count = 10
   (1..(master + node)).each do |mid|
     name = (mid <= node) ? "node" : "master"
