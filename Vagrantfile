@@ -47,6 +47,11 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", inline: "sudo swapoff -a && sudo sysctl -w vm.swappiness=0"
 
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+    sudo sysctl -p
+  SHELL
+
   private_count = 10
   (1..(master + node)).each do |mid|
     name = (mid <= node) ? "node" : "master"
