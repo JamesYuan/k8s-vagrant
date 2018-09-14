@@ -56,6 +56,7 @@ Vagrant.configure("2") do |config|
       n.vm.hostname = "#{name}#{id}"
       ip_addr = "172.16.35.#{private_count}"
       n.vm.network :private_network, ip: "#{ip_addr}",  auto_config: true
+      n.vm.network "forwarded_port", guest: 6443, host: "64#{private_count}"
 
       n.vm.provider :virtualbox do |vb, override|
         vb.name = "kube-#{n.vm.hostname}"
