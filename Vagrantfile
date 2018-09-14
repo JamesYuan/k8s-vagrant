@@ -52,6 +52,13 @@ Vagrant.configure("2") do |config|
     sudo sysctl -p
   SHELL
 
+  config.vm.provision "shell", inline: <<-SHELL
+   sudo yum install -y epel-release python-pip python34 python34-pip
+   sudo yum install -y ansible
+   sudo pip install netaddr
+   sudo pip install --upgrade jinja2
+  SHELL
+
   private_count = 10
   (1..(master + node)).each do |mid|
     name = (mid <= node) ? "node" : "master"
