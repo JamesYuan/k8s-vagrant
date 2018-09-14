@@ -3,8 +3,8 @@ Vagrant.require_version ">= 1.7.0"
 
 def set_vbox(vb, config)
   vb.gui = false
-  vb.memory = 2024
-  vb.cpus = 1
+  vb.memory = 3072
+  vb.cpus = 2
 
   case $os_image
   when :centos7
